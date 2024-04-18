@@ -1,6 +1,8 @@
 # Project files
 domains.json
 domains_array.json
+domains_jsonld.json
+tlds.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
