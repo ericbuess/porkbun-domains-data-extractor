@@ -1,28 +1,60 @@
 import os
 import shutil
 import json
+import logging
 
 domains_array_path = 'domains_array.json'
 domains_jsonld_path = 'domains_jsonld.json'
 tlds_path = 'tlds.txt'
 
+# Set up basic configuration for logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Priority order for TLDs
+tld_priority = ['.ai', '.com', '.app', '.io', '.codes', '.chat', '.tech', '.news', '.dev', '.technology', '.expert', '.consulting', '.pro', '.tips', '.guide', '.blog', '.cloud']
+
 def convert_to_array(src_path):
-    # Read the domains.json file
-    with open(src_path, 'r') as file:
-        data = json.load(file)
+    try:
+        with open(src_path, 'r') as file:
+            data = json.load(file)
 
-    # Convert the object to an array of domain objects
-    domains_array = [{'name': name, **domain} for name, domain in data.items()]
+        domains_array = [{'name': name, **domain} for name, domain in data.items()]
+        logging.info("Conversion to array complete.")
+        return domains_array
+    except json.JSONDecodeError as e:
+        logging.error(f"Error reading JSON: {str(e)}")
+        return []
+    except IOError as e:
+        logging.error(f"Error opening file: {str(e)}")
+        return []
 
-    # Sort the domains by name in ascending order
-    domains_array.sort(key=lambda domain: domain['name'])
+def sort_domains(domains_array):
+    # Define a custom sort key that handles TLDs not in the priority list
+    def domain_sort_key(domain):
+        parts = domain['name'].split('.')
+        name = '.'.join(parts[:-1])  # Domain name without TLD
+        tld = '.' + parts[-1]        # TLD with leading dot
 
-    # Write the updated data back to the domains.json file
+        # Log the TLD and domain name being processed
+        logging.debug(f"Processing domain '{name}' with TLD '{tld}'")
+
+        # Determine sort index for TLD
+        if tld in tld_priority:
+            priority_index = tld_priority.index(tld)
+        else:
+            priority_index = float('inf')  # Assign a high number for undefined TLDs
+
+        # Log the priority index
+        logging.debug(f"TLD '{tld}' has sort index '{priority_index}'")
+
+        return (priority_index, name)  # First sort by TLD, then by domain name
+
+    # Sort the domains using the custom key
+    domains_array.sort(key=domain_sort_key)
     with open(domains_array_path, 'w') as file:
         json.dump(domains_array, file, indent=2)
+    logging.info("Sorting by TLD and name complete.")
 
-    print("Conversion and sorting complete. The {domains_array_path} file has been updated.")
-    return domains_array
 
 def generate_jsonld(domain):
     jsonld = {
@@ -41,53 +73,41 @@ def generate_jsonld(domain):
 
 def create_json_ld(domains_array):
     try:
-        # Generate JSON-LD for each domain
-        jsonld_data = []
-        for domain in domains_array:
-            jsonld_data.append(generate_jsonld(domain))
-
-        # Write the JSON-LD data to a file
+        jsonld_data = [generate_jsonld(domain) for domain in domains_array]
         with open(domains_jsonld_path, 'w') as file:
-            file.write('[\n')
-            file.write(',\n'.join(jsonld_data))
-            file.write('\n]')
-
-        print("JSON-LD data generated successfully.")
-
+            file.write('[\n' + ',\n'.join(jsonld_data) + '\n]')
+        logging.info("JSON-LD data generated successfully.")
     except IOError as e:
-        print(f"Error creating json-ld: {str(e)}")
+        logging.error(f"Error creating JSON-LD: {str(e)}")
         return False
 
 def create_tlds(tlds_path, domains_array):
-    # Generate a list of unique TLDs
-    tlds = set()
-    for domain in domains_array:
-        tld = domain["name"].split(".")[-1]
-        tlds.add(tld)
-
-    # Write the TLDs to a file
+    tlds = {domain["name"].split(".")[-1] for domain in domains_array}
     with open(tlds_path, 'w') as file:
-        file.write('\n'.join(tlds))
-
-    print("JSON-LD data and TLDs generated successfully.")
+        file.write('\n'.join(sorted(tlds)))
+    logging.info("TLDs generated successfully.")
 
 def copy_domains_json(src_path, COPY_DIR):
     try:
-        # Create the destination directory if it doesn't exist
         os.makedirs(COPY_DIR, exist_ok=True)
-
         domains_array = convert_to_array(src_path)
-        shutil.copy(domains_array_path, COPY_DIR + "/" + src_path)
-        print(f"{COPY_DIR} copied successfully to {COPY_DIR}/{src_path}")
+        sort_domains(domains_array)
+
+        shutil.copy(domains_array_path, os.path.join(COPY_DIR, src_path))
+        logging.info(f"domains_array.json copied successfully to {os.path.join(COPY_DIR, src_path)}")
 
         create_json_ld(domains_array)
         shutil.copy(domains_jsonld_path, COPY_DIR)
-        print(f"domains_jsonld.json copied successfully from {domains_jsonld_path} to {COPY_DIR}")
+        logging.info(f"domains_jsonld.json copied successfully to {COPY_DIR}")
 
         create_tlds(tlds_path, domains_array)
         shutil.copy(tlds_path, COPY_DIR)
-        print(f"tlds.txt copied successfully from {tlds_path} to {COPY_DIR}")
+        logging.info(f"tlds.txt copied successfully to {COPY_DIR}")
         return True
     except IOError as e:
-        print(f"Error copying domains.json: {str(e)}")
+        logging.error(f"Error during file operations: {str(e)}")
         return False
+
+# Example usage:
+if __name__ == "__main__":
+    copy_domains_json('domains.json', 'output_directory')
