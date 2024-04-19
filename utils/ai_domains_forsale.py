@@ -77,8 +77,8 @@ def copy_domains_json(src_path, COPY_DIR):
         os.makedirs(COPY_DIR, exist_ok=True)
 
         domains_array = convert_to_array(src_path)
-        shutil.copy(domains_array_path, COPY_DIR)
-        print(f"domains.json copied successfully from {domains_array_path} to {COPY_DIR}")
+        shutil.copy(domains_array_path, COPY_DIR + "/" + src_path)
+        print(f"{COPY_DIR} copied successfully to {COPY_DIR}/{src_path}")
 
         create_json_ld(domains_array)
         shutil.copy(domains_jsonld_path, COPY_DIR)
