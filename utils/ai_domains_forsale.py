@@ -81,12 +81,6 @@ def create_json_ld(domains_array):
         logging.error(f"Error creating JSON-LD: {str(e)}")
         return False
 
-def create_tlds(tlds_path, domains_array):
-    tlds = {domain["name"].split(".")[-1] for domain in domains_array}
-    with open(tlds_path, 'w') as file:
-        file.write('\n'.join(sorted(tlds)))
-    logging.info("TLDs generated successfully.")
-
 def copy_domains_json(src_path, COPY_DIR):
     try:
         os.makedirs(COPY_DIR, exist_ok=True)
@@ -100,9 +94,6 @@ def copy_domains_json(src_path, COPY_DIR):
         shutil.copy(domains_jsonld_path, COPY_DIR)
         logging.info(f"domains_jsonld.json copied successfully to {COPY_DIR}")
 
-        create_tlds(tlds_path, domains_array)
-        shutil.copy(tlds_path, COPY_DIR)
-        logging.info(f"tlds.txt copied successfully to {COPY_DIR}")
         return True
     except IOError as e:
         logging.error(f"Error during file operations: {str(e)}")

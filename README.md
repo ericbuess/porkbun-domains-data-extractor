@@ -11,7 +11,7 @@ The Porkbun Domains Data Extractor is a Python script that extracts domain infor
 - Updates the JSON file with the extracted domain data, preserving existing data between runs
 - Handles various exceptions and edge cases to ensure smooth execution
 - Provides informative console output to track the progress and status of the extraction process
-- Optionally copies files such as domains.json, domains_array.json, domains_jsonld.json, and tlds.txt to another directory once all domains have had their data extracted.
+- Optionally copies files such as domains.json, domains_array.json, and domains_jsonld.json to another directory once all domains have had their data extracted.
 
 ## Prerequisites
 
@@ -66,7 +66,7 @@ Before running the script, make sure you have the following prerequisites instal
 
 6. The script will display progress and status updates in the console.
 
-7. If `COPY_DIR` has a value in `config.py`, once the extraction process is complete, generated files such as domains.json, domains_array.json, domains_jsonld.json, and tlds.txt will be copied to the directory you chose in the config file and the script will terminate.
+7. If `COPY_DIR` has a value in `config.py`, once the extraction process is complete, generated files such as domains.json, domains_array.json, and domains_jsonld.json will be copied to the directory you chose in the config file and the script will terminate.
 
 ## Troubleshooting
 
