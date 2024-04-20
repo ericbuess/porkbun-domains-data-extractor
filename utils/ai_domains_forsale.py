@@ -88,6 +88,29 @@ def create_json_ld(domains_array):
         logging.error(f"Error creating JSON-LD: {str(e)}")
         return False
 
+def update_html(COPY_DIR):
+    try:
+        dev_html_path = os.path.join(COPY_DIR, 'dev.html')
+        index_html_path = os.path.join(COPY_DIR, 'index.html')
+
+        with open(dev_html_path, 'r') as file:
+            dev_html = file.read()
+
+        with open(domains_jsonld_path, 'r') as file:
+            jsonld_data = file.read()
+
+        index_html = dev_html.replace('<!--JSONLD-->', jsonld_data)
+        index_html = index_html.replace('<!-- <script', '<script').replace('</script> -->', '</script>')
+
+        with open(index_html_path, 'w') as file:
+            file.write(index_html)
+
+        logging.info("HTML file updated successfully.")
+        return True
+    except IOError as e:
+        logging.error(f"Error updating HTML file: {str(e)}")
+        return False
+
 def copy_domains_json(src_path, COPY_DIR):
     try:
         os.makedirs(COPY_DIR, exist_ok=True)
@@ -100,6 +123,8 @@ def copy_domains_json(src_path, COPY_DIR):
         create_json_ld(domains_array)
         shutil.copy(domains_jsonld_path, COPY_DIR)
         logging.info(f"domains_jsonld.json copied successfully to {COPY_DIR}")
+
+        update_html(COPY_DIR)
 
         return True
     except IOError as e:
