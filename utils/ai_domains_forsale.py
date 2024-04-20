@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 domains_array_path = 'domains_array.json'
 domains_jsonld_path = 'domains_jsonld.json'
-domains_in_use = ["asi.bible","chatgpt.recipes","gptprime.ai","bom.chat","bookofmormon.chat","standardworks.chat","standard-works.chat","sermonwriter.ai","hemeonc.ai","chatgpt.makeup"]
+domains_in_use = ["asi.bible","chatgpt.recipes","gptprime.ai","bom.chat","bookofmormon.chat","standardworks.chat","standard-works.chat","sermonwriter.ai","hemeonc.ai","chatgpt.makeup","ai-domains.forsale"]
 
 # Priority order for TLDs
 tld_priority = ['.ai', '.com', '.app', '.io', '.codes', '.chat', '.tech', '.news', '.dev', '.technology', '.expert', '.consulting', '.pro', '.tips', '.guide', '.blog', '.cloud']
