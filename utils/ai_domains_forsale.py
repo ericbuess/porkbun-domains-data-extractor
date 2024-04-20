@@ -3,12 +3,12 @@ import shutil
 import json
 import logging
 
-domains_array_path = 'domains_array.json'
-domains_jsonld_path = 'domains_jsonld.json'
-tlds_path = 'tlds.txt'
-
 # Set up basic configuration for logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+domains_array_path = 'domains_array.json'
+domains_jsonld_path = 'domains_jsonld.json'
+domains_in_use = ["asi.bible","chatgpt.recipes","gptprime.ai","bom.chat","bookofmormon.chat","standardworks.chat","standard-works.chat","sermonwriter.ai","hemeonc.ai","chatgpt.makeup"]
 
 # Priority order for TLDs
 tld_priority = ['.ai', '.com', '.app', '.io', '.codes', '.chat', '.tech', '.news', '.dev', '.technology', '.expert', '.consulting', '.pro', '.tips', '.guide', '.blog', '.cloud']
@@ -19,6 +19,7 @@ def convert_to_array(src_path):
             data = json.load(file)
 
         domains_array = [{'name': name, **domain} for name, domain in data.items()]
+        mark_domains_in_use(domains_array)  # Call function to mark domains in use
         logging.info("Conversion to array complete.")
         return domains_array
     except json.JSONDecodeError as e:
@@ -27,6 +28,13 @@ def convert_to_array(src_path):
     except IOError as e:
         logging.error(f"Error opening file: {str(e)}")
         return []
+    
+def mark_domains_in_use(domains_array):
+    # Set of domains in use for faster lookup
+    domains_in_use_set = set(domains_in_use)
+    for domain in domains_array:
+        domain['inUse'] = domain['name'] in domains_in_use_set
+    logging.info("Marking domains in use complete.")
 
 def sort_domains(domains_array):
     # Define a custom sort key that handles TLDs not in the priority list
@@ -54,7 +62,6 @@ def sort_domains(domains_array):
     with open(domains_array_path, 'w') as file:
         json.dump(domains_array, file, indent=2)
     logging.info("Sorting by TLD and name complete.")
-
 
 def generate_jsonld(domain):
     jsonld = {
