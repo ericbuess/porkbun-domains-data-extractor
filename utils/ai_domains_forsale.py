@@ -99,7 +99,7 @@ def update_html(COPY_DIR):
         with open(domains_jsonld_path, 'r') as file:
             jsonld_data = file.read()
 
-        index_html = dev_html.replace('<!--JSONLD-->', jsonld_data)
+        index_html = dev_html.replace('<!--JSONLD-->', f"<script type='application/ld+json'>\n{jsonld_data}\n</script>")
         index_html = index_html.replace('<!-- <script', '<script').replace('</script> -->', '</script>')
 
         with open(index_html_path, 'w') as file:
