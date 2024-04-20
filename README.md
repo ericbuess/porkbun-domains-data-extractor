@@ -66,7 +66,7 @@ Before running the script, make sure you have the following prerequisites instal
 
 6. The script will display progress and status updates in the console.
 
-7. If `COPY_DIR` has a value in `config.py`, once the extraction process is complete, generated files such as domains.json, domains_array.json, and domains_jsonld.json will be copied to the directory you chose in the config file, and the dev.html there will have jsonld and Google Analytics code injected into it as saved as index.html. Then the script will terminate. Assumes `<!--JSONLD-->` and `<!--GA-->` exist in the head section of dev.html within COPY_DIR
+7. If `COPY_DIR` has a value in `config.py`, once the extraction process is complete, generated files such as domains.json, domains_array.json, and domains_jsonld.json will be copied to the directory you chose in the config file, and the dev.html there will have jsonld injected and comments around script tags (e.g. Google Analytics) removed before it is saved as index.html. Then the script will terminate. Assumes both `<!--JSONLD-->` and `<!-- <script>...</script> -->` comment tag exists around GA in the head section of dev.html within COPY_DIR.
 
 ## Troubleshooting
 
