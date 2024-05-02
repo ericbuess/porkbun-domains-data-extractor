@@ -11,7 +11,6 @@ The Porkbun Domains Data Extractor is a Python script that extracts domain infor
 - Updates the JSON file with the extracted domain data, preserving existing data between runs
 - Handles various exceptions and edge cases to ensure smooth execution
 - Provides informative console output to track the progress and status of the extraction process
-- Optionally copies files such as domains.json, domains_array.json, and domains_jsonld.json to another directory and injects jsonld and Google Analytics code into a dev.html file renaming it to index.html once all domains have had their data extracted.
 
 ## Prerequisites
 
@@ -39,12 +38,6 @@ Before running the script, make sure you have the following prerequisites instal
 
 1. Open the `config.py` file and provide the location used for your Chrome web driver.
 
-2. (Optional) Specify the directory where you want to copy the generated files once it's finished. For example:
-
-   ```python
-   COPY_PATH = "../ai-domains.forsale"
-   ```
-
 ## Usage
 
 1. Open Chrome in debug mode with port 9222 listening. On macOS the command to run is
@@ -65,8 +58,6 @@ Before running the script, make sure you have the following prerequisites instal
 5. The extracted domain data will be added to domains.json one at a time until the script completes. If a domain already exists in the file it will be skipped. To refresh all domains, delete the file.
 
 6. The script will display progress and status updates in the console.
-
-7. If `COPY_DIR` has a value in `config.py`, once the extraction process is complete, generated files such as domains.json, domains_array.json, and domains_jsonld.json will be copied to the directory you chose in the config file, and the dev.html there will have jsonld injected and comments around script tags (e.g. Google Analytics) removed before it is saved as index.html. Then the script will terminate. Assumes both `<!--JSONLD-->` and `<!-- <script>...</script> -->` comment tag exists around GA in the head section of dev.html within COPY_DIR.
 
 ## Troubleshooting
 
