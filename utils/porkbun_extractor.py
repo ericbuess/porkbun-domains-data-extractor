@@ -146,7 +146,7 @@ def get_domains(driver):
         except NoSuchElementException:
             print("Market column not found for the current row.")
 
-    with ThreadPoolExecutor(max_workers=4) as executor:
+    with ThreadPoolExecutor(max_workers=1) as executor:
         futures = [executor.submit(process_row, row) for row in rows]
         for future in as_completed(futures):
             future.result()
