@@ -1,5 +1,6 @@
 from utils import web_driver, porkbun_extractor
 
+
 def main():
     driver = web_driver.initialize_web_driver()
 
@@ -14,6 +15,7 @@ def main():
         print(f"Extracted data for {len(domains)} domains.")
     else:
         print(f"No domains found.")
+
 
 if __name__ == '__main__':
     main()
